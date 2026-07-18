@@ -1,0 +1,46 @@
+resources:
+  jobs:
+    zerobus_healthcare_ingest:
+      name: "Zerobus Healthcare Ingest Demo"
+      description: "Ingests sample healthcare events into Delta Lake via Zerobus"
+
+      tasks:
+        - task_key: ingest_healthcare_events
+          notebook_task:
+            notebook_path: ../src/zerobus_ingest_job.py
+            source: WORKSPACE
+
+          # Serverless compute
+          environment_key: default
+
+      # Environment with Zerobus SDK
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+            dependencies:
+              - databricks-zerobus-ingest-sdk>=0.2.0
+
+      # Pass variables as job parameters
+      parameters:
+        - name: zerobus_server_endpoint
+          default: ${var.zerobus_server_endpoint}
+        - name: workspace_url
+          default: ${workspace.host}
+        - name: table_name
+          default: ${var.table_name}
+        - name: client_id
+          default: ${var.client_id}
+        - name: client_secret
+          default: ${var.client_secret}
+        - name: num_records
+          default: ${var.num_records}
+
+      # Optional: Schedule (uncomment to enable)
+      # schedule:
+      #   quartz_cron_expression: "0 0 * * * ?"
+      #   timezone_id: "UTC"
+
+      tags:
+        project: zerobus-healthcare-demo
+        type: demo

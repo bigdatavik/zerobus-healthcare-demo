@@ -1,0 +1,50 @@
+bundle:
+  name: zerobus-healthcare-demo
+
+# =============================================================================
+# CONFIGURE THESE VARIABLES FOR YOUR ENVIRONMENT
+# =============================================================================
+variables:
+  # Zerobus server endpoint: <workspace_id>.zerobus.<region>.cloud.databricks.com
+  zerobus_server_endpoint:
+    description: "Zerobus server endpoint"
+    default: ""
+
+  # Target Unity Catalog table: <catalog>.<schema>.healthcare_events
+  table_name:
+    description: "Target table in Unity Catalog"
+    default: ""
+
+  # Service principal credentials
+  client_id:
+    description: "Service principal application ID"
+    default: ""
+
+  client_secret:
+    description: "Service principal OAuth secret"
+    default: ""
+
+  # Number of records to ingest per run
+  num_records:
+    description: "Number of healthcare events to generate"
+    default: "10"
+
+# =============================================================================
+# WORKSPACE TARGETS
+# =============================================================================
+targets:
+  # Development target - update 'host' to your workspace URL
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://<your-workspace>.cloud.databricks.com
+
+  # Production target (optional)
+  prod:
+    mode: production
+    workspace:
+      host: https://<your-workspace>.cloud.databricks.com
+
+include:
+  - resources/*.yml
