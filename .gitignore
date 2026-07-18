@@ -39,3 +39,6 @@ Thumbs.db
 
 # Databricks bundle state (local)
 .databricks/
+
+# Local config with real values (use databricks.yml.sample as template)
+databricks.yml
