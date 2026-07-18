@@ -1,0 +1,42 @@
+# LinkedIn content (private)
+linkedin_package/
+
+# Demo guides with sensitive info
+DEMO_GUIDE.md
+LEARNING_PATH.md
+
+# Claude Code files
+CLAUDE.md
+
+# Environment and secrets
+.env
+*.env
+secrets.json
+credentials.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.venv/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
