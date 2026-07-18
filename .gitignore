@@ -1,9 +1,5 @@
-# LinkedIn content (private)
-linkedin_package/
-
-# Demo guides with sensitive info
-DEMO_GUIDE.md
-LEARNING_PATH.md
+# Demo materials (private)
+demo/
 
 # Claude Code files
 CLAUDE.md
@@ -40,3 +36,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Databricks bundle state (local)
+.databricks/

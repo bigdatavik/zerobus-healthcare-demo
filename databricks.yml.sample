@@ -8,7 +8,7 @@ variables:
   # Unity Catalog location
   catalog:
     description: "Unity Catalog name"
-    default: ""  # Example: "my_catalog"
+    default: "my_catalog"  # <-- CHANGE THIS
 
   schema:
     description: "Schema name"
@@ -19,18 +19,22 @@ variables:
     default: "healthcare_events"
 
   # Zerobus connection
+  # Format: <workspace_id>.zerobus.<region>.cloud.databricks.com
+  # Find workspace_id in your URL: https://xxx.cloud.databricks.com/?o=<workspace_id>
   zerobus_server_endpoint:
-    description: "Zerobus server: <workspace_id>.zerobus.<region>.cloud.databricks.com"
-    default: ""  # Example: "1234567890.zerobus.us-east-1.cloud.databricks.com"
+    description: "Zerobus server endpoint"
+    default: "1234567890123456.zerobus.us-east-1.cloud.databricks.com"  # <-- CHANGE THIS
 
   # Service principal credentials
+  # Create with: databricks service-principals create --display-name "zerobus-producer"
   client_id:
     description: "Service principal application ID"
-    default: ""  # Example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    default: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  # <-- CHANGE THIS
 
+  # Generate with: databricks service-principals secrets create <sp-id>
   client_secret:
     description: "Service principal OAuth secret"
-    default: ""  # Example: "dosexxxxxxxxxxxxxxxxxxxxxxxxx"
+    default: "dosexxxxxxxxxxxxxxxxxxxxxxxxx"  # <-- CHANGE THIS
 
   # Ingestion settings
   num_records:
@@ -45,12 +49,12 @@ targets:
     mode: development
     default: true
     workspace:
-      host: ""  # Example: "https://my-workspace.cloud.databricks.com"
+      host: "https://my-workspace.cloud.databricks.com"  # <-- CHANGE THIS
 
   prod:
     mode: production
     workspace:
-      host: ""  # Example: "https://my-workspace.cloud.databricks.com"
+      host: "https://my-workspace.cloud.databricks.com"  # <-- CHANGE THIS (optional)
 
 include:
   - resources/*.yml

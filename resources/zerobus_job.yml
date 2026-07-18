@@ -1,19 +1,37 @@
 resources:
   jobs:
     zerobus_healthcare_ingest:
-      name: "Zerobus Healthcare Ingest Demo"
-      description: "Ingests sample healthcare events into Delta Lake via Zerobus"
+      name: "Zerobus Healthcare Demo"
+      description: "Sets up table and ingests healthcare events via Zerobus"
 
       tasks:
-        - task_key: ingest_healthcare_events
+        # Task 1: Create schema and table
+        - task_key: setup_table
           notebook_task:
-            notebook_path: ../src/zerobus_ingest_job.py
+            notebook_path: ../src/01_setup_table.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              table: ${var.table}
             source: WORKSPACE
-
-          # Serverless compute
           environment_key: default
 
-      # Environment with Zerobus SDK
+        # Task 2: Ingest data (depends on setup)
+        - task_key: ingest_data
+          depends_on:
+            - task_key: setup_table
+          notebook_task:
+            notebook_path: ../src/02_zerobus_ingest.py
+            base_parameters:
+              zerobus_server_endpoint: ${var.zerobus_server_endpoint}
+              workspace_url: ${workspace.host}
+              table_name: ${var.catalog}.${var.schema}.${var.table}
+              client_id: ${var.client_id}
+              client_secret: ${var.client_secret}
+              num_records: ${var.num_records}
+            source: WORKSPACE
+          environment_key: default
+
       environments:
         - environment_key: default
           spec:
@@ -21,26 +39,6 @@ resources:
             dependencies:
               - databricks-zerobus-ingest-sdk>=0.2.0
 
-      # Pass variables as job parameters
-      parameters:
-        - name: zerobus_server_endpoint
-          default: ${var.zerobus_server_endpoint}
-        - name: workspace_url
-          default: ${workspace.host}
-        - name: table_name
-          default: ${var.table_name}
-        - name: client_id
-          default: ${var.client_id}
-        - name: client_secret
-          default: ${var.client_secret}
-        - name: num_records
-          default: ${var.num_records}
-
-      # Optional: Schedule (uncomment to enable)
-      # schedule:
-      #   quartz_cron_expression: "0 0 * * * ?"
-      #   timezone_id: "UTC"
-
       tags:
         project: zerobus-healthcare-demo
-        type: demo
+        deployed_by: databricks-asset-bundles

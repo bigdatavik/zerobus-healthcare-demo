@@ -1,10 +1,8 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Zerobus Healthcare Ingest Job
+# MAGIC # Zerobus Healthcare Ingest
 # MAGIC
-# MAGIC This notebook ingests sample healthcare events into Delta Lake via Zerobus.
-# MAGIC
-# MAGIC **Parameters are configured via Databricks Asset Bundles.**
+# MAGIC Ingests sample healthcare events into Delta Lake via Zerobus gRPC.
 
 # COMMAND ----------
 
@@ -51,7 +49,11 @@ from zerobus.sdk.shared import RecordType, StreamConfigurationOptions, TableProp
 
 # COMMAND ----------
 
-# Sample data options
+# MAGIC %md
+# MAGIC ## Sample Data Generation
+
+# COMMAND ----------
+
 EVENT_TYPES = ["admission", "discharge", "claim", "rx_fill", "lab_result"]
 FACILITY_CODES = ["FAC001", "FAC002", "FAC003", "FAC004", "FAC005"]
 DIAGNOSIS_CODES = ["E11.9", "I10", "J06.9", "M54.5", "K21.0", "F32.9", "J45.909"]
@@ -100,7 +102,7 @@ def generate_healthcare_event():
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Initialize Zerobus SDK and Create Stream
+# MAGIC ## Initialize Zerobus and Ingest
 
 # COMMAND ----------
 
@@ -109,14 +111,9 @@ sdk = ZerobusSdk(SERVER_ENDPOINT, WORKSPACE_URL)
 options = StreamConfigurationOptions(record_type=RecordType.JSON)
 table_props = TableProperties(TABLE_NAME)
 
-print("Creating stream (connecting to Zerobus)...")
+print("Creating stream...")
 stream = sdk.create_stream(CLIENT_ID, CLIENT_SECRET, table_props, options)
-print("Stream created! Connected and authenticated.")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Ingest Healthcare Events
+print("Connected!")
 
 # COMMAND ----------
 
@@ -145,48 +142,23 @@ print(f"Ingestion complete! Successful: {successful}, Failed: {failed}")
 
 # COMMAND ----------
 
-# Close the stream
 stream.close()
 print("Stream closed.")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Validate Ingested Data
+# MAGIC ## Verify Data
 
 # COMMAND ----------
 
-# Count total records
-df = spark.sql(f"SELECT COUNT(*) as total_records FROM {TABLE_NAME}")
-display(df)
+display(spark.sql(f"SELECT COUNT(*) as total_records FROM {TABLE_NAME}"))
 
 # COMMAND ----------
 
-# View recent records
-df = spark.sql(f"""
-    SELECT
-        event_id,
-        member_id,
-        event_type,
-        from_unixtime(event_timestamp / 1000000) as event_time,
-        amount
-    FROM {TABLE_NAME}
-    ORDER BY event_timestamp DESC
-    LIMIT 10
-""")
-display(df)
-
-# COMMAND ----------
-
-# Analytics by event type
-df = spark.sql(f"""
-    SELECT
-        event_type,
-        COUNT(*) as count,
-        ROUND(AVG(amount), 2) as avg_amount,
-        ROUND(SUM(amount), 2) as total_amount
+display(spark.sql(f"""
+    SELECT event_type, COUNT(*) as count, ROUND(AVG(amount), 2) as avg_amount
     FROM {TABLE_NAME}
     GROUP BY event_type
     ORDER BY count DESC
-""")
-display(df)
+"""))
