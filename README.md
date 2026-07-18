@@ -125,8 +125,8 @@ LIMIT 10;
 
 ```
 zerobus-healthcare-demo/
-├── databricks.yml           # Bundle config (EDIT THIS)
-├── databricks.yml.sample    # Sample config with examples
+├── databricks.yml.sample    # Sample config - copy to databricks.yml and edit
+├── databricks.yml           # Your local config (create from sample, gitignored)
 ├── resources/
 │   └── zerobus_job.yml      # Job definition (2 tasks)
 ├── src/
